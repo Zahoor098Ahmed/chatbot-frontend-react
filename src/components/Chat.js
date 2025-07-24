@@ -14,40 +14,48 @@ function Chat() {
     setIsTyping(true);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
+       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json'
+  },
   body: JSON.stringify({ message: input }),
 });
 
       const data = await res.json();
-      const botMessage = { text: data.response, sender: 'bot' };
+      const botMessage = {
+        text: data?.response || 'Sorry, I could not understand.',
+        sender: 'bot',
+      };
       setMessages(prev => [...prev, botMessage]);
-    } catch {
-      const errorMsg = { text: 'Error: Could not reach server', sender: 'bot' };
+    } catch (err) {
+      const errorMsg = {
+        text: '⚠️ Error: Could not reach server. Please try again later.',
+        sender: 'bot',
+      };
       setMessages(prev => [...prev, errorMsg]);
     } finally {
       setIsTyping(false);
     }
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') sendMessage();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-100 flex items-center justify-center">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-2xl p-6 border border-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-2xl p-6 border border-gray-200 flex flex-col">
         <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">🤖 AI Chatbot</h1>
 
-        <div className="h-[400px] overflow-y-auto space-y-4 border border-gray-200 rounded-md p-4 bg-gray-50 mb-4">
-          {messages.map((msg, i) => (
+        <div className="flex-1 h-[400px] overflow-y-auto space-y-4 border border-gray-200 rounded-md p-4 bg-gray-50 mb-4">
+          {messages.map((msg, index) => (
             <div
-              key={i}
+              key={index}
               className={`p-3 rounded-xl w-fit max-w-[80%] ${
                 msg.sender === 'user'
-                  ? 'bg-blue-500 text-white self-end ml-auto'
-                  : 'bg-gray-300 text-black self-start mr-auto'
+                  ? 'bg-blue-500 text-white ml-auto'
+                  : 'bg-gray-300 text-black mr-auto'
               }`}
             >
               {msg.text}
