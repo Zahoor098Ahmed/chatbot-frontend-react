@@ -14,11 +14,12 @@ function Chat() {
     setIsTyping(true);
 
     try {
-      const res = await fetch('http://localhost:5000/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
-      });
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: input }),
+});
+
       const data = await res.json();
       const botMessage = { text: data.response, sender: 'bot' };
       setMessages(prev => [...prev, botMessage]);
